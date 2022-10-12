@@ -1,7 +1,7 @@
 'use strict'
 
 const t = require('tap')
-const { notAcceptableHandler, unsupportedMediaTypeHandler } = require('../lib/error-handlers')
+const { defaultNotAcceptableHandler, defaultUnsupportedMediaTypeHandler } = require('../lib/error-handlers')
 const fastify = require('fastify')
 const test = t.test
 
@@ -22,7 +22,7 @@ t.beforeEach(async () => {
 
 test('notAcceptableHandler should throw correct error', async t => {
   try {
-    await notAcceptableHandler.call(server, request)
+    await defaultNotAcceptableHandler.call(server, request)
     t.fail()
   } catch (err) {
     t.equal(err.message, 'Media type \'application/json\' is not acceptable.')
@@ -33,7 +33,7 @@ test('notAcceptableHandler should throw correct error', async t => {
 
 test('unsupportedMediaTypeHandler should throw correct error', async t => {
   try {
-    await unsupportedMediaTypeHandler.call(server, request)
+    await defaultUnsupportedMediaTypeHandler.call(server, request)
     t.fail()
   } catch (err) {
     t.equal(err.message, 'Media type \'text/plain\' is not supported for this resource and method.')

@@ -366,15 +366,153 @@ test('producesAndConsumes constraint', async () => {
 })
 
 test('should add "accept" to vary header for produces constraint', async t => {
-  // TODO
+  server.get('/', {
+    constraints: {
+      produces: 'text/plain'
+    }
+  }, async () => 'text')
+
+  const response = await server.inject({
+    method: 'GET',
+    url: '/',
+    headers: {
+      accept: 'text/plain'
+    }
+  })
+
+  t.ok(response.headers.vary)
+})
+
+test('should append "accept" to vary header for produces constraint', async t => {
+  server.get('/', {
+    constraints: {
+      produces: 'text/plain'
+    }
+  }, async (req, reply) => { reply.header('vary', 'authorization') })
+
+  const response = await server.inject({
+    method: 'GET',
+    url: '/',
+    headers: {
+      accept: 'text/plain'
+    }
+  })
+
+  t.ok(response.headers.vary)
+  t.equal(response.headers.vary, 'authorization, accept')
 })
 
 test('should add "accept" to vary header for producesAndConsumes constraint', async t => {
-  // TODO
+  server.put('/', {
+    constraints: {
+      producesAndConsumes: {
+        consumes: 'text/plain',
+        produces: 'application/json'
+      }
+    }
+  }, async (req, reply) => { reply.header('vary', 'authorization') })
+
+  const response = await server.inject({
+    method: 'PUT',
+    url: '/',
+    headers: {
+      accept:'application/json',
+      'content-type': 'text/plain'
+    }
+  })
+
+  t.ok(response.headers.vary)
+  t.equal(response.headers.vary, 'authorization, accept')
 })
 
-test('should not add to vary header if configured', async t => {
-  // TODO
+test('should not add to vary header if configured - produces', async t => {
+  server = await fastify().register(require('@fastify/sensible')).register(require('..'), { ignoreVary: true })
+
+  server.get('/', {
+    constraints: {
+      produces: 'text/plain'
+    }
+  }, async () => 'text')
+
+  const response = await server.inject({
+    method: 'GET',
+    url: '/',
+    headers: {
+      accept: 'text/plain'
+    }
+  })
+
+  t.notOk(response.headers.vary)
+})
+
+test('should not add to vary header if configured - producesAndConsumes', async t => {
+  server = await fastify().register(require('@fastify/sensible')).register(require('..'), { ignoreVary: true })
+
+  server.put('/', {
+    constraints: {
+      producesAndConsumes: {
+        consumes: 'text/plain',
+        produces: 'application/json'
+      }
+    }
+  }, async (req, reply) => { return '' })
+
+  const response = await server.inject({
+    method: 'PUT',
+    url: '/',
+    headers: {
+      accept:'application/json',
+      'content-type': 'text/plain'
+    }
+  })
+
+  t.notOk(response.headers.vary)
+})
+
+test('plugin should not override existing onSend hooks', async t => {
+  let called = false
+
+  server.get('/', {
+    constraints: {
+      produces: 'text/plain'
+    },
+    onSend: async () => { called = true }
+  }, async () => 'text')
+
+  await server.inject({
+    method: 'GET',
+    url: '/',
+    headers: {
+      accept: 'text/plain'
+    }
+  })
+
+  t.ok(called)
+})
+
+test('plugin should not override existing onSend hooks - array', async t => {
+  let counter = 0
+
+  server.put('/', {
+    constraints: {
+      producesAndConsumes: {
+        consumes: 'text/plain',
+        produces: 'application/json'
+      }
+    },
+    onSend: [ async () => { counter++ }, async () => { counter++ } ]
+  }, async () => 'text')
+
+  await server.inject({
+    method: 'PUT',
+    url: '/',
+    headers: {
+      accept:'application/json',
+      'content-type': 'text/plain'
+    }
+  })
+
+  t.equal(counter, 2)
 })
 
 t.afterEach(async () => {

@@ -3,7 +3,7 @@ const consumesStrategy = require('./lib/strategies/consumes')
 const producesAndConsumesStrategy = require('./lib/strategies/producesAndConsumes')
 
 const fp = require('fastify-plugin')
-const { notAcceptableHandler, unsupportedMediaTypeHandler } = require('./lib/error-handlers')
+const { defaultNotAcceptableHandler, defaultUnsupportedMediaTypeHandler } = require('./lib/error-handlers')
 const { kNotAcceptable, kUnsupportedMediaType } = require('./lib/constants')
 const { vary } = require('./lib/vary')
 
@@ -11,7 +11,9 @@ const { vary } = require('./lib/vary')
 const kRouteAlreadyProcessed = Symbol('route-already-processed')
 
 function fastifyContentNegotiation (fastify, options, done) {
-  options.vary = options.vary || true
+  const ignoreVary = options.ignoreVary
+  const notAcceptableHandler = options.notAcceptableHandler || defaultNotAcceptableHandler
+  const unsupportedMediaTypeHandler = options.unsupportedMediaTypeHandler || defaultUnsupportedMediaTypeHandler
 
   function onRouteHook (routeOptions) {
     const { url, method, constraints, custom } = routeOptions
@@ -55,12 +57,14 @@ function fastifyContentNegotiation (fastify, options, done) {
         }
       })) return
 
-      addRoute({ produces: kNotAcceptable }, options.notAcceptableHandler || notAcceptableHandler)
+      addRoute({ produces: kNotAcceptable }, notAcceptableHandler)
 
-      if (options.vary) {
+      if (!ignoreVary) {
         addOnSendHook()
       }
-    } else if (constraints.consumes) {
+    }
+
+    if (constraints.consumes) {
       if (this.hasRoute({
         method,
         url,
@@ -69,9 +73,11 @@ function fastifyContentNegotiation (fastify, options, done) {
         }
       })) return
 
-      addRoute({ consumes: kUnsupportedMediaType }, options.unsupportedMediaTypeHandler || unsupportedMediaTypeHandler)
-    } else if (constraints.producesAndConsumes) {
-      if (this.hasRoute({
+      addRoute({ consumes: kUnsupportedMediaType }, unsupportedMediaTypeHandler)
+    }
+
+    if (constraints.producesAndConsumes) {
+      if (!this.hasRoute({
         method,
         url,
         constraints: {
@@ -80,23 +86,35 @@ function fastifyContentNegotiation (fastify, options, done) {
             consumes: kUnsupportedMediaType
           }
         }
-      })) return
+      })) {
+        addRoute({
+          producesAndConsumes: {
+            produces: kUnsupportedMediaType,
+            consumes: kUnsupportedMediaType
+          }
+        }, unsupportedMediaTypeHandler)
+      }
 
-      addRoute({
-        producesAndConsumes: {
-          produces: kUnsupportedMediaType,
-          consumes: kUnsupportedMediaType
+      if (!this.hasRoute({
+        method,
+        url,
+        constraints: {
+          producesAndConsumes: {
+            produces: kNotAcceptable,
+            consumes: kNotAcceptable
+          }
         }
-      }, options.unsupportedMediaTypeHandler || unsupportedMediaTypeHandler)
+      })) {
 
-      addRoute({
-        producesAndConsumes: {
-          produces: kNotAcceptable,
-          consumes: kNotAcceptable
-        }
-      }, options.notAcceptableHandler || notAcceptableHandler)
+        addRoute({
+          producesAndConsumes: {
+            produces: kNotAcceptable,
+            consumes: kNotAcceptable
+          }
+        }, notAcceptableHandler)
+      }
 
-      if (options.vary) {
+      if (!ignoreVary) {
         addOnSendHook()
       }
     }

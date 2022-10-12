@@ -4,12 +4,23 @@ const t = require('tap')
 const test = t.test
 const { vary } = require('../lib/vary')
 
-test('vary should add "accept" to vary header with already set vary header ', async t => {
-  const response = {
-    headers: {
-      vary: 'authorization'
+const createResponse = (headers) => {
+  return {
+    headers: { ...headers },
+    hasHeader: function (key) {
+      return this.getHeader(key) !== undefined
+    },
+    header: function (key, value) {
+      this.headers[key] = value
+    },
+    getHeader: function (key) {
+      return this.headers[key]
     }
   }
+}
+
+test('vary should add "accept" to vary header with already set vary header ', async t => {
+  const response = createResponse({ vary: 'authorization' })
 
   vary({}, response, {})
 
@@ -17,9 +28,7 @@ test('vary should add "accept" to vary header with already set vary header ', as
 })
 
 test('vary should add "accept" to vary header', async t => {
-  const response = {
-    headers: {}
-  }
+  const response = createResponse({})
 
   vary({}, response, {})
 

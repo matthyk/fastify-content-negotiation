@@ -1,12 +1,12 @@
 import { FastifyPluginAsync, FastifyPluginCallback, RouteHandlerMethod } from 'fastify'
 
 type ContentNegotiationPluginOptions = {
-  vary: boolean
-  notAcceptableHandler: RouteHandlerMethod
-  unsupportedMediaTypeHandler: RouteHandlerMethod
+  ignoreVary?: boolean
+  notAcceptableHandler?: RouteHandlerMethod
+  unsupportedMediaTypeHandler?: RouteHandlerMethod
 }
 
-declare const fastifyContentNegotiation: FastifyPluginAsync<ContentNegotiationPluginOptions> | FastifyPluginCallback<ContentNegotiationPluginOptions>
+declare const fastifyContentNegotiation: FastifyPluginCallback<ContentNegotiationPluginOptions>
 
 declare module 'fastify' {
 

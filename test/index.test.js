@@ -509,6 +509,46 @@ test('plugin should not override existing onSend hooks - array', async t => {
   t.equal(counter, 2)
 })
 
+test('should add content type header - produces', async t => {
+  server.get('/', {
+    constraints: {
+      produces: 'application/vnd.test+plain'
+    }
+  }, async () => 'text')
+
+  const response = await server.inject({
+    method: 'GET',
+    url: '/',
+    headers: {
+      accept: 'application/vnd.test+plain'
+    }
+  })
+
+  t.equal(response.headers['content-type'], 'application/vnd.test+plain; charset=UTF-8')
+})
+
+test('should add content type header - producesAndConsumes', async t => {
+  server.put('/', {
+    constraints: {
+      producesAndConsumes: {
+        consumes: 'text/plain',
+        produces: 'application/json'
+      }
+    }
+  }, async () => 'text')
+
+  const response = await server.inject({
+    method: 'put',
+    url: '/',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'text/plain'
+    }
+  })
+
+  t.equal(response.headers['content-type'], 'application/json; charset=UTF-8')
+})
+
 t.afterEach(async () => {
   server.close()
 })

@@ -20,15 +20,15 @@ function fastifyContentNegotiation (fastify, options, done) {
 
     if (!constraints || (custom && custom[kRouteAlreadyProcessed])) return
 
-    function addOnSendHook () {
+    function addOnSendHook (fn) {
       if (routeOptions.onSend) {
         if (Array.isArray(routeOptions.onSend)) {
-          routeOptions.onSend.push(vary)
+          routeOptions.onSend.push(fn)
         } else {
-          routeOptions.onSend = [routeOptions.onSend, vary]
+          routeOptions.onSend = [routeOptions.onSend, fn]
         }
       } else {
-        routeOptions.onSend = vary
+        routeOptions.onSend = fn
       }
     }
 
@@ -60,8 +60,12 @@ function fastifyContentNegotiation (fastify, options, done) {
       addRoute({ produces: kNotAcceptable }, notAcceptableHandler)
 
       if (!ignoreVary) {
-        addOnSendHook()
+        addOnSendHook(vary)
       }
+
+      addOnSendHook(async function (req, reply) {
+        reply.type(constraints.produces + '; charset=UTF-8')
+      })
     }
 
     if (constraints.consumes) {
@@ -114,8 +118,12 @@ function fastifyContentNegotiation (fastify, options, done) {
       }
 
       if (!ignoreVary) {
-        addOnSendHook()
+        addOnSendHook(vary)
       }
+
+      addOnSendHook(async function (req, reply) {
+        reply.type(constraints.producesAndConsumes.produces + '; charset=UTF-8')
+      })
     }
   }
 

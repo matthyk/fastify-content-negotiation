@@ -1,6 +1,6 @@
-import { FastifyPluginAsync, FastifyPluginCallback, RouteHandlerMethod } from 'fastify'
+import { FastifyPluginCallback, RouteHandlerMethod } from 'fastify'
 
-type ContentNegotiationPluginOptions = {
+export type ContentNegotiationPluginOptions = {
   ignoreVary?: boolean
   notAcceptableHandler?: RouteHandlerMethod
   unsupportedMediaTypeHandler?: RouteHandlerMethod

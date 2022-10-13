@@ -14,7 +14,6 @@ t.beforeEach(async () => {
 })
 
 test('notAcceptableHandler should build correct error', async t => {
-
   server.get('/users/:id', {
     constraints: {
       produces: 'text/plain'
@@ -44,7 +43,6 @@ test('notAcceptableHandler should build correct error', async t => {
 })
 
 test('unsupportedMediaTypeHandler should build correct error', async t => {
-
   server.post('/users/:id', {
     constraints: {
       consumes: 'application/json'
@@ -74,7 +72,6 @@ test('unsupportedMediaTypeHandler should build correct error', async t => {
 })
 
 test('produces constraint', async () => {
-
   test('simple case', async t => {
     server.get('/users/:id', {
       constraints: {
@@ -173,7 +170,6 @@ test('produces constraint', async () => {
 })
 
 test('consumes constraint', async () => {
-
   test('simple case', async t => {
     server.post('/', {
       constraints: {
@@ -252,9 +248,7 @@ test('consumes constraint', async () => {
 })
 
 test('producesAndConsumes constraint', async () => {
-
   test('simple case', async t => {
-
     server.put('/', {
       constraints: {
         producesAndConsumes: {
@@ -416,7 +410,7 @@ test('should add "accept" to vary header for producesAndConsumes constraint', as
     method: 'PUT',
     url: '/',
     headers: {
-      accept:'application/json',
+      accept: 'application/json',
       'content-type': 'text/plain'
     }
   })
@@ -461,7 +455,7 @@ test('should not add to vary header if configured - producesAndConsumes', async 
     method: 'PUT',
     url: '/',
     headers: {
-      accept:'application/json',
+      accept: 'application/json',
       'content-type': 'text/plain'
     }
   })
@@ -500,14 +494,14 @@ test('plugin should not override existing onSend hooks - array', async t => {
         produces: 'application/json'
       }
     },
-    onSend: [ async () => { counter++ }, async () => { counter++ } ]
+    onSend: [async () => { counter++ }, async () => { counter++ }]
   }, async () => 'text')
 
   await server.inject({
     method: 'PUT',
     url: '/',
     headers: {
-      accept:'application/json',
+      accept: 'application/json',
       'content-type': 'text/plain'
     }
   })

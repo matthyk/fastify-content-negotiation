@@ -20,7 +20,7 @@ function fastifyContentNegotiation (fastify, options, done) {
 
     if (!constraints || (custom && custom[kRouteAlreadyProcessed])) return
 
-    function addOnSendHook() {
+    function addOnSendHook () {
       if (routeOptions.onSend) {
         if (Array.isArray(routeOptions.onSend)) {
           routeOptions.onSend.push(vary)
@@ -105,7 +105,6 @@ function fastifyContentNegotiation (fastify, options, done) {
           }
         }
       })) {
-
         addRoute({
           producesAndConsumes: {
             produces: kNotAcceptable,

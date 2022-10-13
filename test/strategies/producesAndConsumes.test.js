@@ -27,7 +27,7 @@ test('strategy must not match when derived', t => {
 test('strategy should validate that value is typeof object with properties produces and consumes', t => {
   t.plan(8)
 
-  t.doesNotThrow(() => producesAndConsumesStrategy.validate({  produces: '', consumes: ''}))
+  t.doesNotThrow(() => producesAndConsumesStrategy.validate({ produces: '', consumes: '' }))
   t.throws(() => producesAndConsumesStrategy.validate(false))
   t.throws(() => producesAndConsumesStrategy.validate(1))
   t.throws(() => producesAndConsumesStrategy.validate({}))
@@ -48,7 +48,6 @@ test('strategy should derive accept and content-type header', t => {
   t.equal(derived.consumes, 'text/html')
 })
 
-
 test('strategy should derive "*/*" if no accept header is present', t => {
   t.plan(1)
 
@@ -60,7 +59,7 @@ test('strategy should derive "*/*" if no accept header is present', t => {
 test('strategy should derive "application/octet-stream" if no content-type header is present', t => {
   t.plan(1)
 
-  const req = { headers: { 'accept': 'application/json' } }
+  const req = { headers: { accept: 'application/json' } }
 
   t.equal(producesAndConsumesStrategy.deriveConstraint(req).consumes, 'application/octet-stream')
 })
@@ -69,7 +68,6 @@ test('strategy should return correct handler', t => {
   t.plan(5)
 
   const storage = producesAndConsumesStrategy.storage()
-
 
   storage.set({ produces: kNotAcceptable, consumes: kNotAcceptable }, first)
   storage.set({ produces: kUnsupportedMediaType, consumes: kUnsupportedMediaType }, second)

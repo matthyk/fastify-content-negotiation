@@ -4,12 +4,12 @@
   "description": "HTTP compliant content negotiation for Fastify",
   "main": "index.js",
   "directories": {
-    "doc": "docs",
-    "example": "examples",
     "test": "test"
   },
   "scripts": {
-    "test": "tap",
+    "test": "npm run test:unit && npm run test:typescript",
+    "test:unit": "tap",
+    "test:typescript": "tsd",
     "lint": "standard | snazzy",
     "lint:fix": "standard --fix",
     "license-checker": "license-checker --production --onlyAllow=\"MIT;ISC;BSD-3-Clause;BSD-2-Clause\""
@@ -30,9 +30,11 @@
   },
   "homepage": "https://github.com/matthyk/fastify-content-negotiation#readme",
   "devDependencies": {
+    "@fastify/pre-commit": "^2.0.2",
     "@fastify/sensible": "^5.1.0",
+    "@types/node": "^18.8.5",
     "@types/tap": "^15.0.7",
-    "fastify": "^4.7.0",
+    "fastify": "^4.8.1",
     "find-my-way": "^7.0.1",
     "license-checker": "^25.0.1",
     "snazzy": "^9.0.0",
@@ -46,9 +48,11 @@
   },
   "standard": {
     "ignore": [
-      "index.d.ts",
-      "types/*",
-      "test/types/*"
+      "index.d.ts"
     ]
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "test"
+  ]
 }

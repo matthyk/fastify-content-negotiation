@@ -32,7 +32,7 @@
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
     "@fastify/sensible": "^5.1.0",
-    "@types/node": "^18.8.5",
+    "@types/node": "^20.1.0",
     "@types/tap": "^15.0.7",
     "fastify": "^4.8.1",
     "find-my-way": "^7.0.1",

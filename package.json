@@ -35,7 +35,7 @@
     "@types/node": "^22.0.0",
     "@types/tap": "^15.0.7",
     "fastify": "^4.8.1",
-    "find-my-way": "^8.0.0",
+    "find-my-way": "^9.0.0",
     "license-checker": "^25.0.1",
     "snazzy": "^9.0.0",
     "standard": "^17.0.0",

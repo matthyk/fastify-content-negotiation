@@ -31,7 +31,7 @@
   "homepage": "https://github.com/matthyk/fastify-content-negotiation#readme",
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
-    "@fastify/sensible": "^5.1.0",
+    "@fastify/sensible": "^6.0.1",
     "@types/node": "^22.0.0",
     "@types/tap": "^15.0.7",
     "fastify": "^4.8.1",

@@ -34,7 +34,7 @@
     "@fastify/sensible": "^5.1.0",
     "@types/node": "^24.0.3",
     "@types/tap": "^18.0.0",
-    "fastify": "^4.8.1",
+    "fastify": "^5.6.0",
     "find-my-way": "^9.0.0",
     "license-checker": "^25.0.1",
     "snazzy": "^9.0.0",
